@@ -11,13 +11,9 @@ MOCK_CONFIG = {
     "move_sl_to_breakeven": True,
     "tp_orders": [
         {"price_percent": 1.0, "quantity_percent": 50.0},
-        {"price_percent": 2.0, "quantity_percent": 50.0}
+        {"price_percent": 2.0, "quantity_percent": 50.0},
     ],
-    "limit_orders": {
-        "range_percent": 2.0,
-        "orders_count": 3,
-        "amount_per_order": 25.0
-    },
+    "limit_orders": {"range_percent": 2.0, "orders_count": 3, "amount_per_order": 25.0},
     "api_timeout": 10,
-    "max_retries": 3
+    "max_retries": 3,
 }

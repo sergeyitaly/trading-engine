@@ -1,5 +1,4 @@
-
-#app/config.py
+# app/config.py
 import json
 import os
 import re
