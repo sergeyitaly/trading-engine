@@ -2,9 +2,9 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
+# Install system dependencies with version pinning and no recommended packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc=4:* \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
