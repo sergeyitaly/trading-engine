@@ -1,5 +1,6 @@
 import streamlit.components.v1 as components
 import json
+import streamlit as st
 
 
 class BrowserLocalStorage:
