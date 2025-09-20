@@ -11,9 +11,12 @@ from datetime import datetime
 import logging
 import time
 from contextlib import asynccontextmanager
-from .main import TradingEngine, logger, get_session
+from .main import TradingEngine, TradingConfig, logger, get_session
 from fastapi import WebSocket, WebSocketDisconnect
 import os
+import requests
+from bs4 import BeautifulSoup
+from app.config import load_config
 
 # Lifespan management
 @asynccontextmanager
@@ -45,7 +48,6 @@ app.add_middleware(
 # Global engine instance with thread safety
 engine = None
 engine_lock = asyncio.Lock()
-
 
 class ConnectionManager:
     def __init__(self):
@@ -102,32 +104,24 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.post("/start")
 async def start_trading(request: Request):
-    """Start trading with the given configuration and credentials"""
+    """Start trading with the configuration from URL/local file and credentials from request"""
     global engine
     
     try:
         data = await request.json()
-        config = data.get("config", {})
         credentials = data.get("credentials", {})
         validate_only = data.get("validate_only", False)
         
-        account_type = config.get("account", "").lower()
+        # Load configuration from URL or local file
+        base_config = load_config()
         
-        # Filter out unwanted fields that might come from status responses
-        valid_config_fields = {
-            'account', 'symbol', 'side', 'market_order_amount', 'stop_loss_percent',
-            'trailing_sl_offset_percent', 'limit_orders_amount', 'leverage', 
-            'move_sl_to_breakeven', 'tp_orders', 'limit_orders', 'api_timeout',
-            'max_retries', 'bybit_testnet_api_key', 'bybit_testnet_api_secret',
-            'bybit_mainnet_api_key', 'bybit_mainnet_api_secret', 'gate_testnet_api_key',
-            'gate_testnet_api_secret', 'gate_mainnet_api_key', 'gate_mainnet_api_secret'
-        }
+        # Get account type from the loaded config
+        account_type = base_config.get("account", "").lower()
         
-        filtered_config = {k: v for k, v in config.items() if k in valid_config_fields}
+        # Prepare config with account-specific credentials from the request
+        config_with_creds = base_config.copy()
         
-        # Prepare config with account-specific credentials
-        config_with_creds = filtered_config.copy()
-        
+        # Add credentials to the config based on account type
         if "bybit" in account_type:
             if "testnet" in account_type:
                 config_with_creds["bybit_testnet_api_key"] = credentials.get("api_key")
@@ -175,12 +169,12 @@ async def start_trading(request: Request):
                         os.environ["GATE_API_KEY"] = credentials.get("api_key", "")
                         os.environ["GATE_API_SECRET"] = credentials.get("api_secret", "")
                 
-                # Create temporary config file for this session
-                with open("temp_config.json", "w") as f:
-                    json.dump(config_with_creds, f)
+                # Create TradingConfig object directly from the merged config
+                config_obj = TradingConfig.from_dict(config_with_creds)
                 
-                engine = TradingEngine("temp_config.json")
-                
+                # Initialize trading engine with the config object directly
+                engine = TradingEngine(config_obj)  # Pass the config object
+
                 if validate_only:
                     # Only validate connection without starting trading
                     await engine.initialize()
@@ -202,12 +196,17 @@ async def start_trading(request: Request):
             except asyncio.TimeoutError:
                 raise HTTPException(status_code=504, detail="Start operation timed out")
             except Exception as e:
+                # Add detailed error logging
+                logger.error(f"Error in start_trading: {str(e)}")
+                logger.error(f"Error type: {type(e).__name__}")
+                import traceback
+                logger.error(f"Traceback: {traceback.format_exc()}")
                 raise HTTPException(status_code=500, detail=str(e))
                 
     except Exception as e:
+        logger.error(f"Error processing request: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}")
-
-        
+    
 async def run_engine_with_timeout():
     """Run engine with timeout protection"""
     global engine
@@ -310,19 +309,23 @@ async def get_config():
     start_time = time.time()
     
     try:
-        async with asyncio.timeout(1):  # 1 second timeout
-            with open("config.json", "r") as f:
-                config = json.load(f)
+        async with asyncio.timeout(5):  # Increased timeout for remote fetch
+            config = load_config()
+            
+            if config is None:
+                raise HTTPException(status_code=404, detail="Configuration not found")
         
         response_time = time.time() - start_time
         return {**config, "response_time": response_time}
     except asyncio.TimeoutError:
         response_time = time.time() - start_time
-        raise HTTPException(status_code=504, detail="Config read timeout")
+        raise HTTPException(status_code=504, detail="Config fetch timeout")
+    except HTTPException:
+        raise
     except Exception as e:
         response_time = time.time() - start_time
-        raise HTTPException(status_code=500, detail=str(e))
-
+        raise HTTPException(status_code=500, detail=f"Error loading config: {str(e)}")
+    
 @app.post("/config")
 async def update_config(request: Request):
     """Update trading configuration"""

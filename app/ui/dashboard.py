@@ -902,29 +902,8 @@ class TradingDashboard:
         # Get current credentials for the selected account
         credentials_payload = self.prepare_credentials_payload()
         
-        # Prepare symbol for API call
-        symbol_for_api = self.validate_symbol_format(self.config["symbol"], self.config["account"])
-        
-        # Create config copy with only the necessary fields (no status data)
-        config_copy = {
-            "account": self.config["account"],
-            "symbol": symbol_for_api["api"],
-            "side": self.config["side"],
-            "market_order_amount": self.config["market_order_amount"],
-            "stop_loss_percent": self.config["stop_loss_percent"],
-            "trailing_sl_offset_percent": self.config["trailing_sl_offset_percent"],
-            "limit_orders_amount": self.config["limit_orders_amount"],
-            "leverage": self.config["leverage"],
-            "move_sl_to_breakeven": self.config["move_sl_to_breakeven"],
-            "tp_orders": self.config["tp_orders"],
-            "limit_orders": self.config["limit_orders"],
-            "api_timeout": self.config.get("api_timeout", 30),
-            "max_retries": self.config.get("max_retries", 3)
-        }
-        
-        # Send credentials along with config
+        # Only send credentials, config will be loaded from URL/local file by the API
         payload = {
-            "config": config_copy,
             "credentials": credentials_payload
         }
         
@@ -975,7 +954,7 @@ class TradingDashboard:
         except requests.exceptions.RequestException as e:
             error_msg = f"Failed to connect to trading engine: {str(e)}"
             return {"status": "error", "message": f"❌ {error_msg}"}
-        
+                
     def check_server_status(self):
         """Check if the server is running and responsive"""
         try:

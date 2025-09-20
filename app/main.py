@@ -11,9 +11,8 @@ from datetime import datetime, timedelta
 import aiohttp
 import async_timeout
 import logging
-import time
 from enum import Enum
-
+from app.config import load_config
 # Common log format
 log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
@@ -29,7 +28,6 @@ logging.basicConfig(
 
 # App logger
 logger = logging.getLogger(__name__)
-
 # API logger (separate file)
 api_logger = logging.getLogger('ccxt')
 api_logger.setLevel(logging.INFO)
@@ -48,6 +46,10 @@ def get_session():
         timeout = aiohttp.ClientTimeout(total=10, connect=5, sock_connect=5, sock_read=5)
         SESSION = aiohttp.ClientSession(timeout=timeout, connector=aiohttp.TCPConnector(limit=100, limit_per_host=20))
     return SESSION
+
+
+            
+
 
 class OrderType(str, Enum):
     LIMIT = "limit"
@@ -71,7 +73,6 @@ class LimitOrdersConfig(BaseModel):
     range_percent: float = Field(..., gt=0, description="Range percentage for averaging orders")
     orders_count: int = Field(..., gt=0, le=20, description="Number of averaging orders")
     amount_per_order: Optional[float] = None
-
 
 
 class TradingConfig:
@@ -122,6 +123,16 @@ class TradingConfig:
         self.gate_testnet_api_secret = gate_testnet_api_secret
         self.gate_mainnet_api_key = gate_mainnet_api_key
         self.gate_mainnet_api_secret = gate_mainnet_api_secret
+
+    @classmethod
+    def from_file(cls, filename: str) -> "TradingConfig":
+        with open(filename, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return cls.from_dict(data)
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "TradingConfig":
+        return cls(**data)
 
     @validator('tp_orders')
     def validate_tp_orders(cls, v):
@@ -744,41 +755,18 @@ class PositionManager:
             logger.error(f"Error closing all orders: {e}")
             
 class TradingEngine:
-    def __init__(self, config_path: str):
-        self.config_path = config_path
-        self.config = None
+    def __init__(self, config: TradingConfig):  
+        self.config = config
         self.exchange = None
         self.position_manager = None
         self._fast_exchange = None
         
     async def initialize(self):
         """Initialize trading engine"""
-        # Load configuration
-        await self.load_config()
-        
-        # Initialize exchange connection
         await self.init_exchange()
-        
-    async def load_config(self):
-        """Load trading configuration from JSON file"""
-        try:
-            if not os.path.exists(self.config_path):
-                raise FileNotFoundError(f"Config file not found: {self.config_path}")
-                
-            with open(self.config_path, 'r') as f:
-                config_data = json.load(f)
-                
-            self.config = TradingConfig(**config_data)
-            logger.info("Configuration loaded successfully")
-            
-        except Exception as e:
-            logger.error(f"Error loading configuration: {e}")
-            raise
-            
+                            
     async def init_exchange(self):
-        """Initialize exchange connection using account-specific credentials"""
         try:
-            # Determine which exchange to use based on config
             exchange_config = {
                 'apiKey': '',
                 'secret': '',
@@ -947,10 +935,14 @@ class TradingEngine:
         if self._fast_exchange:
             await self._fast_exchange.close()
 
+
 async def main():
     """Main function"""
-    # Initialize and run trading engine
-    engine = TradingEngine("config.json")
+    # Load config from file
+    config = TradingConfig.from_file("config.json")
+
+    # Initialize trading engine with config
+    engine = TradingEngine(config)
     
     try:
         await engine.initialize()
