@@ -85,6 +85,7 @@ tenacity==8.5.0
 toml==0.10.2
 tomli==2.0.1
 tornado==6.5.2
+types-requests==2.32.4.20250913
 typing_extensions==4.15.0
 tzdata==2025.2
 tzlocal==5.3.1
