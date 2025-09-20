@@ -81,14 +81,43 @@ jobs:
 
     - name: Test Docker container
       run: |
+        # Build and run container
         docker run -d --name test-container -p 8000:8000 -p 8501:8501 trading-engine:test
-        sleep 10
+        
+        # Wait longer and check logs
+        sleep 15
+        echo "=== Container status ==="
         docker ps
-        # Test if containers are running
-        docker exec test-container ps aux | grep uvicorn || exit 1
-        docker exec test-container ps aux | grep streamlit || exit 1
-        docker stop test-container
-
+        echo "=== Container logs ==="
+        docker logs test-container
+        
+        # Check processes with multiple approaches
+        echo "=== Checking processes ==="
+        docker exec test-container ps aux || echo "ps aux failed"
+        
+        # Try different grep patterns
+        echo "=== Looking for uvicorn ==="
+        docker exec test-container ps aux | grep -i uvicorn || echo "No uvicorn found with grep"
+        docker exec test-container pgrep -f uvicorn || echo "No uvicorn found with pgrep"
+        
+        echo "=== Looking for streamlit ==="
+        docker exec test-container ps aux | grep -i streamlit || echo "No streamlit found with grep"
+        docker exec test-container pgrep -f streamlit || echo "No streamlit found with pgrep"
+        
+        # Test if ports are actually listening
+        echo "=== Testing ports ==="
+        docker exec test-container netstat -tlnp || echo "netstat not available"
+        docker exec test-container ss -tlnp || echo "ss not available"
+        
+        # Test HTTP endpoints directly
+        echo "=== Testing HTTP endpoints ==="
+        curl -f http://localhost:8000/health || echo "FastAPI health check failed"
+        curl -f http://localhost:8501/ || echo "Streamlit health check failed"
+        
+        # If we reach here, force failure since processes weren't found
+        echo "ERROR: Required processes not found"
+        exit 1
+        
     - name: Validate Kubernetes manifests
       run: |
         # Check if k8s manifests exist and are valid
