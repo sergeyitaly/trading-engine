@@ -1,4 +1,3 @@
-# app/main.py
 import asyncio
 import json
 import os
@@ -187,8 +186,6 @@ class FastExchange:
 
     async def close(self):
         """Close exchange connection"""
-        if hasattr(self.exchange, "close"):
-            await self.exchange.close()
         if hasattr(self.exchange, "close") and self.exchange is not None:
             await self.exchange.close()
 
@@ -322,7 +319,20 @@ class PositionManager:
             ticker = await self.exchange.safe_request(
                 "fetch_ticker", self.config.symbol
             )
-            price = ticker["last"]
+            price = ticker.get("last", 0)
+        
+        # Add comprehensive None and key checking
+        if (self.market_info is None or 
+            not isinstance(self.market_info, dict) or
+            "type" not in self.market_info or 
+            "settle" not in self.market_info or
+            "precision" not in self.market_info or
+            "amount" not in self.market_info["precision"] or
+            "limits" not in self.market_info or
+            "amount" not in self.market_info["limits"]
+        ):
+            logger.error("Market info missing required data")
+            return 0.0
 
         if self.market_info["type"] == "swap" and self.market_info["settle"] == "USDT":
             # USDT perpetual contracts
@@ -331,11 +341,13 @@ class PositionManager:
             # Coin-margined contracts or other types
             contract_size = amount_usdt * price
 
-        # Apply precision limits
+        # Apply precision limits with safety checks
         precision = self.market_info["precision"]["amount"]
         contract_size = float(round(contract_size / precision) * precision)
 
-        return max(contract_size, self.market_info["limits"]["amount"]["min"])
+        # Get minimum amount with safety check
+        min_amount = self.market_info["limits"]["amount"].get("min", 0)
+        return max(contract_size, min_amount)
 
     async def open_market_position(self):
         """Open initial market position"""
@@ -420,25 +432,29 @@ class PositionManager:
             positions = await self.exchange.safe_request(
                 "fetch_positions", [self.config.symbol]
             )
+            
+            # Add proper None check
             if positions is None:
                 logger.warning("No positions data returned")
                 return False
-            for position in positions:
-                if (
-                    position["symbol"] == self.config.symbol
-                    and abs(float(position["contracts"])) > 0
-                    and position["side"] == self.config.side.value
-                ):
 
+            for position in positions:
+                # Add comprehensive None and type checking
+                if (position is not None and 
+                    isinstance(position, dict) and
+                    position.get("symbol") == self.config.symbol and
+                    abs(float(position.get("contracts", 0))) > 0 and
+                    position.get("side") == self.config.side.value
+                ):
                     self.position = position
-                    self.average_entry_price = float(position["entryPrice"])
+                    self.average_entry_price = float(position.get("entryPrice", 0))
                     self.entry_time = datetime.now()
 
                     logger.info(
                         f"Position updated: Entry Price: ${self.average_entry_price}, "
-                        f"Contracts: {position['contracts']}, "
-                        f"Side: {position['side']}, "
-                        f"Leverage: {position['leverage'] if 'leverage' in position else 'N/A'}"
+                        f"Contracts: {position.get('contracts', 0)}, "
+                        f"Side: {position.get('side', 'unknown')}, "
+                        f"Leverage: {position.get('leverage', 'N/A')}"
                     )
                     return True
 
@@ -448,7 +464,7 @@ class PositionManager:
         except Exception as e:
             logger.error(f"Error updating position info: {e}")
             return False
-
+        
     async def set_leverage(self):
         """Set leverage for the symbol with error handling for already-set values"""
         try:
@@ -520,6 +536,10 @@ class PositionManager:
         if not self.average_entry_price or not self.position:
             logger.error("No average entry price or position available for TP orders")
             return False
+        if "precision" not in self.market_info or "price" not in self.market_info["precision"]:
+            logger.error("Market info missing precision data")
+            return False
+
 
         symbol = self.config.symbol
         position_size = abs(float(self.position["contracts"]))

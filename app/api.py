@@ -215,7 +215,8 @@ async def start_trading(request: Request):
                 if validate_only:
                     # Only validate connection without starting trading
                     await engine.initialize()
-                    await engine._fast_exchange.close()  # Close connection after validation
+                    if engine._fast_exchange is not None:  # Add null check
+                        await engine._fast_exchange.close()  # Close connection after validation
                     engine = None
 
                     response_time = time.time() - start_time

@@ -451,58 +451,6 @@ class TradingDashboard:
             print(f"Error loading credentials from local storage: {e}")
         return False
 
-    def load_credentials_from_env(self):
-        """Load credentials from environment variables"""
-        env_credentials = {}
-
-        # Check for Bybit credentials in env
-        bybit_testnet_key = os.getenv("BYBIT_TESTNET_API_KEY")
-        bybit_testnet_secret = os.getenv("BYBIT_TESTNET_API_SECRET")
-        bybit_mainnet_key = os.getenv("BYBIT_API_KEY")
-        bybit_mainnet_secret = os.getenv("BYBIT_API_SECRET")
-
-        # Check for Gate.io credentials in env - use correct variable names
-        gate_testnet_key = os.getenv("GATEIO_TESTNET_API_KEY") or os.getenv(
-            "GATE_TESTNET_API_KEY"
-        )
-        gate_testnet_secret = os.getenv("GATEIO_TESTNET_API_SECRET") or os.getenv(
-            "GATE_TESTNET_API_SECRET"
-        )
-        gate_mainnet_key = os.getenv("GATEIO_API_KEY") or os.getenv("GATE_API_KEY")
-        gate_mainnet_secret = os.getenv("GATEIO_API_SECRET") or os.getenv(
-            "GATE_API_SECRET"
-        )
-
-        if bybit_testnet_key and bybit_testnet_secret:
-            env_credentials["bybit_testnet"] = {
-                "api_key": bybit_testnet_key,
-                "api_secret": bybit_testnet_secret,
-                "source": "env",
-            }
-
-        if bybit_mainnet_key and bybit_mainnet_secret:
-            env_credentials["bybit_mainnet"] = {
-                "api_key": bybit_mainnet_key,
-                "api_secret": bybit_mainnet_secret,
-                "source": "env",
-            }
-
-        if gate_testnet_key and gate_testnet_secret:
-            env_credentials["gate_testnet"] = {
-                "api_key": gate_testnet_key,
-                "api_secret": gate_testnet_secret,
-                "source": "env",
-            }
-
-        if gate_mainnet_key and gate_mainnet_secret:
-            env_credentials["gate_mainnet"] = {
-                "api_key": gate_mainnet_key,
-                "api_secret": gate_mainnet_secret,
-                "source": "env",
-            }
-
-        return env_credentials
-
     def get_current_credentials(self, account_type):
         """Get credentials for current account, preferring manual over env"""
         # Get manual credentials if available
