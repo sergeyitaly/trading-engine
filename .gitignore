@@ -1,5 +1,4 @@
 venv/
-.env
 .env copy
 trading_engine.log
 temp_config.json
