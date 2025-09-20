@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trading-engine
+  labels:
+    app: trading-engine
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: trading-engine
+  template:
+    metadata:
+      labels:
+        app: trading-engine
+    spec:
+      containers:
+      - name: trading-engine
+        image: trading-engine:latest
+        ports:
+        - containerPort: 8000
+        - containerPort: 8501
+        envFrom:
+        - secretRef:
+            name: trading-secrets
+        volumeMounts:
+        - mountPath: /app/logs
+          name: logs-volume
+        - mountPath: /app/config.json
+          name: config-volume
+          subPath: config.json
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: logs-volume
+        emptyDir: {}
+      - name: config-volume
+        configMap:
+          name: trading-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trading-engine-service
+spec:
+  selector:
+    app: trading-engine
+  ports:
+  - name: api
+    port: 8000
+    targetPort: 8000
+  - name: dashboard
+    port: 8501
+    targetPort: 8501
+  type: LoadBalancer
