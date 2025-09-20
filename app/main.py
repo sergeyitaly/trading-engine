@@ -189,6 +189,8 @@ class FastExchange:
         """Close exchange connection"""
         if hasattr(self.exchange, "close"):
             await self.exchange.close()
+        if hasattr(self.exchange, "close") and self.exchange is not None:
+            await self.exchange.close()
 
     async def safe_request(self, method_name, *args, **kwargs):
         """Make API request with retry logic and timeout handling"""
@@ -242,7 +244,7 @@ class PositionManager:
         self.exchange = exchange
         self.config = config
         self.position = None
-        self.open_orders = []
+        self.open_orders: List[Dict[str, Any]] = []
         self.average_entry_price = None
         self.entry_time = None
         self._monitor_task = None
@@ -313,7 +315,7 @@ class PositionManager:
             raise
 
     async def calculate_contract_size(
-        self, amount_usdt: float, price: float = None
+        self, amount_usdt: float, price: Optional[float] = None
     ) -> float:
         """Calculate contract size based on amount in USDT"""
         if not price:
@@ -418,7 +420,9 @@ class PositionManager:
             positions = await self.exchange.safe_request(
                 "fetch_positions", [self.config.symbol]
             )
-
+            if positions is None:
+                logger.warning("No positions data returned")
+                return False
             for position in positions:
                 if (
                     position["symbol"] == self.config.symbol
