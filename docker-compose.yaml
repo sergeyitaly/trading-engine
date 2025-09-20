@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  trading-engine:
+    build: .
+    ports:
+      - "8000:8000"
+      - "8501:8501"
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+      - ./config.json:/app/config.json
+      - ./app/ui/style.css:/app/app/ui/style.css
+    restart: unless-stopped
+    networks:
+      - trading-network
+
+networks:
+  trading-network:
+    driver: bridge

@@ -1,0 +1,10 @@
+venv/
+.env
+.env copy
+trading_engine.log
+temp_config.json
+app/__pycache__
+app/ui/__pycache__
+tests/__pycache__
+api_calls.log
+.pytest_cache/

@@ -1,0 +1,38 @@
+{
+    "account": "Gate.io/Mainnet",
+    "symbol": "BTCUSDT",
+    "side": "short",
+    "market_order_amount": 2000.0,
+    "stop_loss_percent": 7.0,
+    "trailing_sl_offset_percent": 3.0,
+    "limit_orders_amount": 2000.0,
+    "leverage": 10,
+    "move_sl_to_breakeven": true,
+    "tp_orders": [
+        {
+            "price_percent": 2.0,
+            "quantity_percent": 25.0
+        },
+        {
+            "price_percent": 5.0,
+            "quantity_percent": 25.0
+        },
+        {
+            "price_percent": 7.0,
+            "quantity_percent": 25.0
+        },
+        {
+            "price_percent": 3.0,
+            "quantity_percent": 25.0
+        }
+    ],
+    "limit_orders": {
+        "range_percent": 5.0,
+        "orders_count": 6,
+        "engine_deal_duration_minutes": 110
+    },
+    "response_time": 0.0007941722869873047,
+    "symbol_display": "BTCUSDT",
+    "symbol_api": "BTCUSDT",
+    "market_type": "linear"
+}

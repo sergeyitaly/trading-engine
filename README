@@ -1,0 +1,49 @@
+# Trading Engine for Bybit/Gate.io
+
+A Python-based trading engine that connects to Bybit or Gate.io testnet, opens positions based on JSON configuration, handles position averaging, and implements dynamic take-profit orders.
+
+## Features
+
+- Connects to Bybit or Gate.io testnet using CCXT
+- Opens market positions based on configuration
+- Places limit orders for position averaging
+- Implements dynamic take-profit orders that update when averaging occurs
+- Monitors positions and order status
+- REST API for control and monitoring
+- Docker containerization
+- Comprehensive logging
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd trading-engine
+
+
+pyenv local 3.11.9
+python -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+
+uvicorn app.api:app --reload --host 0.0.0.0 --port 8000
+streamlit run app/ui/dashboard.py
+ 
+ or
+
+docker-compose down
+docker-compose up --build
+
+
+# Run all unit tests
+python run_tests.py
+
+# Run integration tests as well
+python run_tests.py --run-integration
+
+# Run specific test file
+python -m pytest tests/test_trading_engine.py -v
+
+# Run with coverage
+python -m pytest --cov=app tests/ -v

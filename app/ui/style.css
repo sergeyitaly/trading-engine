@@ -1,0 +1,370 @@
+/* app/ui/dashboard.style.css */
+:root {
+  /* Light theme variables */
+  --light-bg-primary: #f8f9fa;
+  --light-bg-secondary: #ffffff;
+  --light-text-primary: #1a1a1a;
+  --light-text-secondary: #666666;
+  --light-border: #e0e0e0;
+  --light-accent: #4CAF50;
+  --light-accent-hover: #45a049;
+  --light-danger: #ff4d4d;
+  --light-success: #4CAF50;
+  --light-warning: #ff9800;
+  --light-info: #2196F3;
+  
+  /* Dark theme variables */
+  --dark-bg-primary: #030d21;
+  --dark-bg-secondary: #0a1a3a;
+  --dark-text-primary: #ffffff;
+  --dark-text-secondary: #b0b0b0;
+  --dark-border: #2a3b5a;
+  --dark-accent: #4CAF50;
+  --dark-accent-hover: #45a049;
+  --dark-danger: #ff6b6b;
+  --dark-success: #66bb6a;
+  --dark-warning: #ffa726;
+  --dark-info: #42a5f5;
+}
+
+/* Base styles that work for both themes */
+.stApp {
+  background-color: var(--light-bg-primary);
+  color: var(--light-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .stApp {
+    background-color: var(--dark-bg-primary);
+    color: var(--dark-text-primary);
+  }
+}
+
+/* Manual theme toggle support */
+.stApp[data-theme="dark"] {
+  background-color: var(--dark-bg-primary);
+  color: var(--dark-text-primary);
+}
+
+.stApp[data-theme="light"] {
+  background-color: var(--light-bg-primary);
+  color: var(--light-text-primary);
+}
+
+/* Button styles */
+.stButton>button {
+  background-color: var(--light-accent);
+  color: white;
+  border-radius: 5px;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.stButton>button:hover {
+  background-color: var(--light-accent-hover);
+  transform: translateY(-1px);
+}
+
+/* Dark theme buttons */
+@media (prefers-color-scheme: dark) {
+  .stButton>button {
+    background-color: var(--dark-accent);
+  }
+  
+  .stButton>button:hover {
+    background-color: var(--dark-accent-hover);
+  }
+}
+
+.stApp[data-theme="dark"] .stButton>button {
+  background-color: var(--dark-accent);
+}
+
+.stApp[data-theme="dark"] .stButton>button:hover {
+  background-color: var(--dark-accent-hover);
+}
+
+/* Position styles */
+.position-long {
+  background-color: #e8f5e8;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 5px solid var(--light-success);
+  margin: 10px 0;
+  color: var(--light-text-primary);
+  transition: all 0.3s ease;
+}
+
+.position-short {
+  background-color: #ffebee;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 5px solid var(--light-danger);
+  margin: 10px 0;
+  color: var(--light-text-primary);
+  transition: all 0.3s ease;
+}
+
+/* Dark theme positions */
+@media (prefers-color-scheme: dark) {
+  .position-long {
+    background-color: #1e3b1e;
+    border-left: 5px solid var(--dark-success);
+    color: var(--dark-text-primary);
+  }
+  
+  .position-short {
+    background-color: #3e3232;
+    border-left: 5px solid var(--dark-danger);
+    color: var(--dark-text-primary);
+  }
+}
+
+.stApp[data-theme="dark"] .position-long {
+  background-color: #1e3b1e;
+  border-left: 5px solid var(--dark-success);
+  color: var(--dark-text-primary);
+}
+
+.stApp[data-theme="dark"] .position-short {
+  background-color: #3e3232;
+  border-left: 5px solid var(--dark-danger);
+  color: var(--dark-text-primary);
+}
+
+/* Card and container styles */
+.card {
+  background-color: var(--light-bg-secondary);
+  border: 1px solid var(--light-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .card {
+    background-color: var(--dark-bg-secondary);
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+}
+
+.stApp[data-theme="dark"] .card {
+  background-color: var(--dark-bg-secondary);
+  border: 1px solid var(--dark-border);
+}
+
+/* Text colors */
+.text-success {
+  color: var(--light-success);
+}
+
+.text-danger {
+  color: var(--light-danger);
+}
+
+.text-warning {
+  color: var(--light-warning);
+}
+
+.text-info {
+  color: var(--light-info);
+}
+
+@media (prefers-color-scheme: dark) {
+  .text-success {
+    color: var(--dark-success);
+  }
+  
+  .text-danger {
+    color: var(--dark-danger);
+  }
+  
+  .text-warning {
+    color: var(--dark-warning);
+  }
+  
+  .text-info {
+    color: var(--dark-info);
+  }
+}
+
+.stApp[data-theme="dark"] .text-success {
+  color: var(--dark-success);
+}
+
+.stApp[data-theme="dark"] .text-danger {
+  color: var(--dark-danger);
+}
+
+.stApp[data-theme="dark"] .text-warning {
+  color: var(--dark-warning);
+}
+
+.stApp[data-theme="dark"] .text-info {
+  color: var(--dark-info);
+}
+
+/* Input fields */
+.stTextInput>div>div>input,
+.stNumberInput>div>div>input,
+.stSelectbox>div>div>select {
+  background-color: var(--light-bg-secondary);
+  color: var(--light-text-primary);
+  border: 1px solid var(--light-border);
+}
+
+@media (prefers-color-scheme: dark) {
+  .stTextInput>div>div>input,
+  .stNumberInput>div>div>input,
+  .stSelectbox>div>div>select {
+    background-color: var(--dark-bg-secondary);
+    color: var(--dark-text-primary);
+    border: 1px solid var(--dark-border);
+  }
+}
+
+.stApp[data-theme="dark"] .stTextInput>div>div>input,
+.stApp[data-theme="dark"] .stNumberInput>div>div>input,
+.stApp[data-theme="dark"] .stSelectbox>div>div>select {
+  background-color: var(--dark-bg-secondary);
+  color: var(--dark-text-primary);
+  border: 1px solid var(--dark-border);
+}
+
+/* Table styles */
+.stDataFrame {
+  background-color: var(--light-bg-secondary);
+  border: 1px solid var(--light-border);
+  border-radius: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .stDataFrame {
+    background-color: var(--dark-bg-secondary);
+    border: 1px solid var(--dark-border);
+  }
+}
+
+.stApp[data-theme="dark"] .stDataFrame {
+  background-color: var(--dark-bg-secondary);
+  border: 1px solid var(--dark-border);
+}
+
+/* Status indicators */
+.status-connected {
+  color: var(--light-success);
+}
+
+.status-disconnected {
+  color: var(--light-danger);
+}
+
+.status-pending {
+  color: var(--light-warning);
+}
+
+@media (prefers-color-scheme: dark) {
+  .status-connected {
+    color: var(--dark-success);
+  }
+  
+  .status-disconnected {
+    color: var(--dark-danger);
+  }
+  
+  .status-pending {
+    color: var(--dark-warning);
+  }
+}
+
+.stApp[data-theme="dark"] .status-connected {
+  color: var(--dark-success);
+}
+
+.stApp[data-theme="dark"] .status-disconnected {
+  color: var(--dark-danger);
+}
+
+.stApp[data-theme="dark"] .status-pending {
+  color: var(--dark-warning);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--light-border);
+  border-radius: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-track {
+    background: var(--dark-bg-secondary);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--dark-border);
+  }
+}
+
+.stApp[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--dark-bg-secondary);
+}
+
+.stApp[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--dark-border);
+}
+
+/* Theme toggle button (optional) */
+.theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--light-accent);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.theme-toggle:hover {
+  background: var(--light-accent-hover);
+  transform: scale(1.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .theme-toggle {
+    background: var(--dark-accent);
+  }
+  
+  .theme-toggle:hover {
+    background: var(--dark-accent-hover);
+  }
+}
+
+.stApp[data-theme="dark"] .theme-toggle {
+  background: var(--dark-accent);
+}
+
+.stApp[data-theme="dark"] .theme-toggle:hover {
+  background: var(--dark-accent-hover);
+}
