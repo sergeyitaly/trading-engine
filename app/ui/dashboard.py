@@ -18,7 +18,7 @@ import random
 import re
 from datetime import datetime
 from streamlit_local_storage import LocalStorage
-from localstorage import BrowserLocalStorage
+from app.ui.localstorage import BrowserLocalStorage
 
 # Set page config
 st.set_page_config(

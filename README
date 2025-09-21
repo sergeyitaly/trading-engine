@@ -46,4 +46,6 @@ python run_tests.py --run-integration
 python -m pytest tests/test_trading_engine.py -v
 
 # Run with coverage
-python -m pytest --cov=app tests/ -v
+python -m pytest --cov=app tests/ -
+
+python -m pytest tests/ --cov=app --cov-report=html --cov-report=term
