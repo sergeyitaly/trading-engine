@@ -8,3 +8,4 @@ tests/__pycache__
 api_calls.log
 .pytest_cache/
 .mypy_cache
+.coverage

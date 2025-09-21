@@ -175,16 +175,17 @@ jobs:
         chmod +x kubectl
         sudo mv kubectl /usr/local/bin/
 
-    - name: Validate Kubernetes deployment
+    - name: Validate Kubernetes deployment with kubeval
       run: |
         if [ -f "k8s/deployment.yaml" ]; then
-          # Use client-side validation only (no cluster needed)
-          kubectl apply --dry-run=client -f k8s/deployment.yaml
-          echo "✅ Kubernetes deployment validation passed"
+          kubeval --strict k8s/deployment.yaml
+          echo "✅ Kubernetes deployment validation passed (kubeval)"
         else
           echo "ℹ️  No Kubernetes deployment found, skipping"
         fi
+
         
+
   production-deploy-check:
     runs-on: ubuntu-latest
     needs: [production-readiness, kubernetes-validation]
