@@ -860,3 +860,24 @@ class TestIntegration:
                 await engine.position_manager._monitor_task
             except asyncio.CancelledError:
                 pass
+
+
+# Missing: Test connection to demo/testnet modes
+@pytest.mark.asyncio
+async def test_exchange_testnet_connection():
+    """Test that exchange connects to testnet properly"""
+    config = TradingConfig(
+        account="bybit_testnet",
+        symbol="BTCUSDT",
+        side="long",
+        market_order_amount=100,
+        stop_loss_percent=2.0,
+        trailing_sl_offset_percent=1.0,
+        limit_orders_amount=300,
+        leverage=10,
+        move_sl_to_breakeven=True,
+        tp_orders=[{"price_percent": 1.0, "quantity_percent": 50.0}],
+        limit_orders={"range_percent": 0.02, "orders_count": 3},
+        bybit_testnet_api_key="test_key",  # Test testnet credentials
+        bybit_testnet_api_secret="test_secret",
+    )

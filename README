@@ -2,50 +2,121 @@
 
 A Python-based trading engine that connects to Bybit or Gate.io testnet, opens positions based on JSON configuration, handles position averaging, and implements dynamic take-profit orders.
 
+---
+
+## ✅ Current Status
+
+* **Main application (`main.py`)** is **complete and production-ready**:
+
+  * ✅ Config loading from JSON
+  * ✅ Exchange connection initialization
+  * ✅ Main trading loop execution
+  * ✅ Proper error handling and cleanup
+  * ✅ Async runtime management
+
+* **GitHub Actions CI/CD Pipeline**
+  Our automated pipeline ensures production readiness on every commit to `main`/`master`:
+
+  * ✅ Python version compatibility checks (3.11.9)
+  * ✅ Code formatting (Black)
+  * ✅ Linting (Flake8)
+  * ✅ Static type checking (mypy)
+  * ✅ Unit + integration tests with coverage
+  * ✅ Docker image build & container health checks
+  * ✅ Kubernetes manifest validation (`kubeval`)
+  * ✅ Security scans (Dependency Review + Gitleaks)
+
+---
+
 ## Features
 
-- Connects to Bybit or Gate.io testnet using CCXT
-- Opens market positions based on configuration
-- Places limit orders for position averaging
-- Implements dynamic take-profit orders that update when averaging occurs
-- Monitors positions and order status
-- REST API for control and monitoring
-- Docker containerization
-- Comprehensive logging
+* Connects to Bybit or Gate.io testnet using CCXT
+* Opens market positions based on configuration
+* Places limit orders for position averaging
+* Implements dynamic take-profit orders that update when averaging occurs
+* Monitors positions and order status
+* REST API for control and monitoring
+* Streamlit UI for dashboard visualization
+* Docker containerization
+* Comprehensive logging
+
+---
 
 ## Installation
 
-1. Clone the repository:
+### Local Development
+
 ```bash
 git clone <repository-url>
 cd trading-engine
-
 
 pyenv local 3.11.9
 python -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
+```
 
+### Run Services
+
+```bash
+# Start FastAPI backend
 uvicorn app.api:app --reload --host 0.0.0.0 --port 8000
-streamlit run app/ui/dashboard.py
- 
- or
 
+# Start Streamlit dashboard
+streamlit run app/ui/dashboard.py
+```
+
+### Docker (alternative)
+
+```bash
 docker-compose down
 docker-compose up --build
+```
 
+---
 
-# Run all unit tests
+## Testing
+
+Run all unit tests:
+
+```bash
 python run_tests.py
+```
 
-# Run integration tests as well
+Run integration tests:
+
+```bash
 python run_tests.py --run-integration
+```
 
-# Run specific test file
+Run a specific test file:
+
+```bash
 python -m pytest tests/test_trading_engine.py -v
+```
 
-# Run with coverage
-python -m pytest --cov=app tests/ -
+Run with coverage:
 
+```bash
 python -m pytest tests/ --cov=app --cov-report=html --cov-report=term
+```
+
+---
+
+## Deployment
+
+* **Docker image** can be built and deployed directly:
+
+  ```bash
+  docker build -t trading-engine:latest .
+  docker run -p 8000:8000 -p 8501:8501 trading-engine:latest
+  ```
+* **Kubernetes manifests** available under `k8s/`, validated with `kubeval`.
+* **Fly.io** deployment supported with `fly.toml`.
+
+---
+
+## CI/CD Badges
+
+*(Optional: add GitHub Actions & Codecov badges here once pipeline is public)*

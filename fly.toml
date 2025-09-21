@@ -1,5 +1,5 @@
 app = "trading-engine-serhii"
-primary_region = "ams"
+primary_region = "fra"
 
 [build]
   dockerfile = "./Dockerfile"
