@@ -1,20 +1,54 @@
 app = "trading-engine-serhii"
 primary_region = "fra"
 
-[build]
-  dockerfile = "./Dockerfile"
+[env]
+  PORT = "8000"
 
-[http_service]
+[[services]]
   internal_port = 8000
-  force_https = true
-  auto_stop_machines = true
-  auto_start_machines = true
-  min_machines_running = 0
-  
-  [[http_service.ports]]
+  protocol = "tcp"
+
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+
+  [[services.ports]]
     handlers = ["http"]
     port = 80
-  
-  [[http_service.ports]]
+
+  [[services.ports]]
     handlers = ["tls", "http"]
     port = 443
+
+  [services.http_checks]
+    interval = 10000
+    grace_period = "5s"
+    timeout = 2000
+    restart_limit = 3
+
+    [[services.http_checks.http]]
+      path = "/health"
+      method = "get"
+      protocol = "http"
+      tls_skip_verify = false
+
+      [services.http_checks.http.headers]
+        Content-Type = "application/json"
+
+[[services]]
+  internal_port = 8501
+  protocol = "tcp"
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 8501
+
+  [services.http_checks]
+    interval = 15000
+    grace_period = "10s"
+    timeout = 5000
+
+    [[services.http_checks.http]]
+      path = "/"
+      method = "get"
+      protocol = "http"
