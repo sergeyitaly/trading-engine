@@ -157,6 +157,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Install kubeval
+      run: |
+        wget https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz
+        tar xf kubeval-linux-amd64.tar.gz
+        sudo mv kubeval /usr/local/bin/
+        kubeval --version
+
     - name: Set up Kubernetes tools
       run: |
         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -171,9 +178,7 @@ jobs:
         else
           echo "ℹ️  No Kubernetes deployment found, skipping"
         fi
-
         
-
   production-deploy-check:
     runs-on: ubuntu-latest
     needs: [production-readiness, kubernetes-validation]
