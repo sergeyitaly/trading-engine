@@ -4,11 +4,58 @@ A Python-based trading engine that connects to Bybit or Gate.io testnet, opens p
 
 ---
 
+What it does:
+
+1. Exchange Connection
+   ✅ Uses CCXT with proper error handling
+   ✅ Supports both Bybit and Gate.io exchanges
+   ✅ Works with testnet/mainnet environments
+   ✅ Connection pooling with aiohttp for performance
+   ✅ Timeout and retry mechanisms
+
+2. Order Opening & Configuration
+   ✅ Handles market order execution with position sizing
+   ✅ Configurable via Pydantic models (TradingConfig)
+   ✅ Supports both long and short positions
+   ✅ Leverage setting with error handling
+   ✅ **Flexible Config Loading**: Load `config.json` from local storage **or** parse configuration directly from a URL
+
+3. Averaging Logic
+   ✅ Places limit orders in specified range
+   ✅ Calculates proper order distribution
+   ✅ Handles market precision rounding
+   ✅ Updates position info when averaging orders fill
+
+4. TP Logic
+   ✅ Calculates TP prices based on average entry price
+   ✅ Supports multiple TP levels with percentage allocation
+   ✅ Replaces TP orders when position changes (not just adding new ones)
+   ✅ Uses reduceOnly flag for safety
+
+5. Monitoring
+   ✅ Continuous position monitoring loop
+   ✅ Order status checking
+   ✅ Periodic position updates
+   ✅ Console logging with proper formatting
+
+📊 Real-Time Capabilities
+✅ WebSocket Support: Live updates for status, orders, and positions
+✅ Broadcast System: Real-time notifications to all connected clients
+✅ Connection Management: Automatic cleanup of disconnected WebSocket clients
+✅ Multi-Client Support: Simultaneous dashboard/UI connections
+
+2️⃣ Credentials
+.env file: Set your API keys and secrets in a .env file.
+Manual input: Enter credentials at runtime if you prefer not to store them in a file.
+
+---
+
 ## ✅ Current Status
 
 * **Main application (`main.py`)** is **complete and production-ready**:
 
   * ✅ Config loading from JSON
+  * ✅ Config parsing from URL or local storage
   * ✅ Exchange connection initialization
   * ✅ Main trading loop execution
   * ✅ Proper error handling and cleanup
@@ -32,6 +79,10 @@ A Python-based trading engine that connects to Bybit or Gate.io testnet, opens p
 
 * Connects to Bybit or Gate.io testnet using CCXT
 * Opens market positions based on configuration
+* **Configuration Sources**:
+
+  * `config.json` file from local storage
+  * URL-based configuration parsing (e.g. `http://example.com/config.json`)
 * Places limit orders for position averaging
 * Implements dynamic take-profit orders that update when averaging occurs
 * Monitors positions and order status
@@ -73,6 +124,17 @@ streamlit run app/ui/dashboard.py
 docker-compose down
 docker-compose up --build
 ```
+
+---
+
+## Configuration
+
+You can provide your trading configuration in one of two ways:
+
+1. **Local file**: Place a `config.json` file in the project root or specify its path.
+2. **URL**: Pass a config URL (e.g. `http://example.com/config.json`) to the engine. The system will fetch and parse it automatically.
+
+This flexibility makes it easy to share or test different setups without changing the codebase.
 
 ---
 
@@ -120,3 +182,96 @@ python -m pytest tests/ --cov=app --cov-report=html --cov-report=term
 ## CI/CD Badges
 
 *(Optional: add GitHub Actions & Codecov badges here once pipeline is public)*
+
+---
+
+## Positive Aspects to Highlight About Our Trading Engine API
+
+### 🚀 **Performance & Scalability**
+
+* Async-first architecture (FastAPI)
+* Connection pooling & aiohttp
+* GZip compression
+* Timeout protection
+* CORS enabled
+
+### 🔒 **Security & Reliability**
+
+* Thread-safe engine lock
+* Secure credential handling
+* Validation-first design
+* Graceful shutdown
+* Error isolation
+
+### 📊 **Real-Time Capabilities**
+
+* WebSocket updates
+* Broadcast system
+* Connection cleanup
+* Multi-client support
+
+### ⚡ **User Experience**
+
+* Fast response times
+* Validation mode (dry run)
+* Config hot-reload
+* Health monitoring
+
+### 🔧 **Developer Friendly**
+
+* RESTful API
+* WebSocket integration
+* Detailed logging
+* Full type hints
+* Modular structure
+
+### 🌐 **Exchange Integration**
+
+* Bybit & Gate.io support
+* Testnet/Mainnet toggle
+* Automatic leverage handling
+* Market precision awareness
+
+### 📈 **Trading Features**
+
+* Position averaging (DCA)
+* Dynamic TP/SL updates
+* Order lifecycle management
+* Built-in risk management
+
+### 🛡️ **Robustness**
+
+* Timeout resilience
+* Error recovery
+* Memory safety
+* Concurrent safe
+
+### 🎯 **Production Ready**
+
+* UVicorn deployment
+* Middleware stack
+* Monitoring ready
+* Scalable architecture
+
+### 🔄 **Workflow Optimization**
+
+* Background processing
+* Dynamic config updates
+* Session persistence
+* Batch operations
+
+### 📊 **Analytics & Visibility**
+
+* Performance metrics
+* Real-time activity monitoring
+* Order history tracking
+* WebSocket events
+
+### 💡 **Innovative Features**
+
+* Validation-only mode
+* Multiple credential sources
+* Automatic symbol resolution
+* Precision handling
+
+This API provides a **professional-grade trading infrastructure** that combines robust engineering with trader-friendly features, making it suitable for both individual traders and institutional use.

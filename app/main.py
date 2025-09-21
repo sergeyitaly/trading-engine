@@ -1152,6 +1152,17 @@ class TradingEngine:
                 f"Initialized {exchange_id} {'Testnet' if testnet else 'Mainnet'} exchange connection"
             )
 
+            if exchange_id == "bybit":
+                exchange_config["options"] = {
+                    "defaultType": "swap",
+                    "adjustForTimeDifference": True,
+                }
+            elif exchange_id == "gateio":
+                exchange_config["options"] = {
+                    "defaultType": "future",
+                    "adjustForTimeDifference": True,
+                }
+
             # Test connection
             await self.test_connection()
 

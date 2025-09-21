@@ -18,6 +18,10 @@ import random
 import re
 from datetime import datetime
 from streamlit_local_storage import LocalStorage
+import sys, os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 from app.ui.localstorage import BrowserLocalStorage
 
 # Set page config
