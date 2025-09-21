@@ -1,21 +1,20 @@
-app = "trading-engine"
+app = "trading-engine-serhii"
 primary_region = "ams"
 
 [build]
   dockerfile = "./Dockerfile"
 
-[[services]]
+[http_service]
   internal_port = 8000
-  protocol = "tcp"
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
   
-  [services.concurrency]
-    hard_limit = 25
-    soft_limit = 20
-  
-  [[services.ports]]
+  [[http_service.ports]]
     handlers = ["http"]
     port = 80
   
-  [[services.ports]]
+  [[http_service.ports]]
     handlers = ["tls", "http"]
     port = 443
