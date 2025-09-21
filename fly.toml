@@ -45,7 +45,7 @@ primary_region = "fra"
 
   [services.http_checks]
     interval = 15000
-    grace_period = "10s"
+    grace_period = "30s"
     timeout = 5000
 
     [[services.http_checks.http]]
