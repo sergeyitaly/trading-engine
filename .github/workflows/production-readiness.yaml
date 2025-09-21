@@ -178,12 +178,13 @@ jobs:
     - name: Validate Kubernetes deployment
       run: |
         if [ -f "k8s/deployment.yaml" ]; then
-          kubectl apply --dry-run=server -f k8s/deployment.yaml
+          # Use client-side validation only (no cluster needed)
+          kubectl apply --dry-run=client -f k8s/deployment.yaml
           echo "✅ Kubernetes deployment validation passed"
         else
           echo "ℹ️  No Kubernetes deployment found, skipping"
         fi
-
+        
   production-deploy-check:
     runs-on: ubuntu-latest
     needs: [production-readiness, kubernetes-validation]
