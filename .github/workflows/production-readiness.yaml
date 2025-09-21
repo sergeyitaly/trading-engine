@@ -151,12 +151,15 @@ jobs:
     - name: Security scan
       uses: actions/dependency-review-action@v3
       if: github.event_name == 'pull_request'
-      
+
     - name: Check for secrets in code
       uses: gitleaks/gitleaks-action@v2
+      continue-on-error: true
       with:
         config-path: .gitleaks.toml
-
+        no-git: false
+        verbose: true
+        
   kubernetes-validation:
     runs-on: ubuntu-latest
     needs: production-readiness

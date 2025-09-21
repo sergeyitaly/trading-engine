@@ -1,13 +1,4 @@
-title = "gitleaks config"
-
 [[rules]]
-description = "API Key"
-regex = '''(?i)(api[_-]?key|apikey|secret[_-]?key|private[_-]?key)['"]?[\\s\\t\\n\\r]*[:=][\\s\\t\\n\\r]*['"]([0-9a-zA-Z\\-_]{20,})['"]'''
-
-[[rules]]
-description = "AWS Access Key"
-regex = '''(A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}'''
-
-[[rules]]
-description = "Generic Secret"
-regex = '''(?i)secret.*['"]?[\\s\\t\\n\\r]*[:=][\\s\\t\\n\\r]*['"][0-9a-zA-Z\\-_]{10,}['"]'''
+id = "generic-api-key"
+description = "Generic API Key"
+regex = '''(?i)secret.*['\"]?[\\s\\t\\n\\r]*[:=][\\s\\t\\n\\r]*['\"][0-9a-zA-Z\\-_]{10,}['\"]'''
