@@ -114,21 +114,30 @@ jobs:
         docker stop test-container
         docker rm test-container
                 
-    - name: Validate Kubernetes manifests
+    - name: Install kubeval
       run: |
-        # Check if k8s manifests exist and are valid using client-side validation only
+        # Install kubeval for offline validation
+        wget https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz
+        tar xf kubeval-linux-amd64.tar.gz
+        sudo mv kubeval /usr/local/bin/
+        kubeval --version
+
+    - name: Validate Kubernetes manifests with kubeval
+      run: |
         if [ -f "k8s/deployment.yaml" ]; then
-          kubectl apply --dry-run=client --validate=true -f k8s/deployment.yaml
+          echo "Validating deployment.yaml with kubeval..."
+          kubeval --strict k8s/deployment.yaml
         else
           echo "ℹ️  No deployment.yaml found, skipping"
         fi
         
         if [ -f "k8s/service.yaml" ]; then
-          kubectl apply --dry-run=client --validate=true -f k8s/service.yaml
+          echo "Validating service.yaml with kubeval..."
+          kubeval --strict k8s/service.yaml
         else
           echo "ℹ️  No service.yaml found, skipping"
         fi
-        
+                
 
     - name: Check environment variables
       run: |
