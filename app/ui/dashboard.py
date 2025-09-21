@@ -1559,7 +1559,10 @@ class TradingDashboard:
                 st.metric("Entry Price", "N/A")
 
         # Show compact error message for failed position opening due to insufficient balance
+        credentials_valid, cred_msg = self.validate_credentials()
+        
         if (
+            credentials_valid and  # ONLY SHOW IF CREDENTIALS ARE VALID
             status.get("status") == "active"
             and "position" in status
             and status["position"]
@@ -1614,7 +1617,7 @@ class TradingDashboard:
                 "%H:%M:%S"
             )
             st.caption(f"Last update: {update_time}")
-
+            
     def render_position_info(self, status):
         """Render position information"""
         if "position" not in status or not status["position"]:
