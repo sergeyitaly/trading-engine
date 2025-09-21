@@ -5,13 +5,13 @@ primary_region = "fra"
   memory = "512mb"
 
 [env]
-  PORT = "8000"
+  PORT = "8501"  # Changed from 8000 to 8501 (Streamlit's port)
   UVICORN_WORKERS = "1"
   UVICORN_LIMIT_MAX_REQUESTS = "1000"
   UVICORN_TIMEOUT_KEEP_ALIVE = "30"
 
 [[services]]
-  internal_port = 8000
+  internal_port = 8501  # Changed from 8000 to 8501 (Streamlit's port)
   protocol = "tcp"
 
   [services.concurrency]
@@ -33,28 +33,10 @@ primary_region = "fra"
     restart_limit = 3
 
     [[services.http_checks.http]]
-      path = "/health"
+      path = "/"  # Changed from "/health" to "/" (Streamlit's root)
       method = "get"
       protocol = "http"
       tls_skip_verify = false
 
       [services.http_checks.http.headers]
         Content-Type = "application/json"
-
-[[services]]
-  internal_port = 8501
-  protocol = "tcp"
-
-  [[services.ports]]
-    handlers = ["tls", "http"]
-    port = 8501
-
-  [services.http_checks]
-    interval = 15000
-    grace_period = "30s"
-    timeout = 5000
-
-    [[services.http_checks.http]]
-      path = "/"
-      method = "get"
-      protocol = "http"
