@@ -150,7 +150,8 @@ jobs:
 
     - name: Security scan
       uses: actions/dependency-review-action@v3
-
+      if: github.event_name == 'pull_request'
+      
     - name: Check for secrets in code
       uses: gitleaks/gitleaks-action@v2
       with:
