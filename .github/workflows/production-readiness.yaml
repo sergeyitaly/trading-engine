@@ -121,24 +121,12 @@ jobs:
         tar xf kubeval-linux-amd64.tar.gz
         sudo mv kubeval /usr/local/bin/
         kubeval --version
-
-    - name: Validate Kubernetes manifests with kubeval
-      run: |
-        if [ -f "k8s/deployment.yaml" ]; then
-          echo "Validating deployment.yaml with kubeval..."
-          kubeval --strict k8s/deployment.yaml
-        else
-          echo "ℹ️  No deployment.yaml found, skipping"
-        fi
         
-        if [ -f "k8s/service.yaml" ]; then
-          echo "Validating service.yaml with kubeval..."
-          kubeval --strict k8s/service.yaml
-        else
-          echo "ℹ️  No service.yaml found, skipping"
-        fi
+    - name: Validate Kubernetes deployment with kubeval
+      uses: instrumenta/kubeval-action@master
+      with:
+        files: k8s/deployment.yaml
                 
-
     - name: Check environment variables
       run: |
         # Check if required env vars are documented
